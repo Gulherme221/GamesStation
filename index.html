@@ -18,6 +18,16 @@
                placeholder="Pesquisar jogo..."
                oninput="pesquisar()">
     </div>
+
+    <button class="menuTresPontos" onclick="abrirMenu()" aria-label="Abrir menu">⋮</button>
+
+    <div id="menuLateral" class="menuLateral">
+        <button class="fecharMenu" onclick="fecharMenu()">✕</button>
+        <h2>Menu</h2>
+        <button onclick="mostrarPaginaPrincipal()">🎮 Jogos</button>
+        <button onclick="mostrarEmuladores()">Emuladores</button>
+    </div>
+    <div id="fundoMenu" class="fundoMenu" onclick="fecharMenu()"></div>
 </header>
 
 <nav class="consoles">
@@ -29,13 +39,25 @@
     <button onclick="mostrarJogos('Sega MD')">Sega MD</button>
 </nav>
 
-<main>
+<main id="paginaJogos">
 
     <div id="tituloConsole">Todos os jogos</div>
 
     <section id="listaJogos" class="grid"></section>
 
 </main>
+
+<section id="paginaEmuladores" class="paginaEmuladores">
+    <h2>Emuladores</h2>
+    <p>Emuladores disponíveis para download.</p>
+
+    <div class="listaEmuladores">
+        <div class="cardEmulador">
+            <h3>Emuladores</h3>
+            <p>Adicione aqui seus emuladores e os links para download.</p>
+        </div>
+    </div>
+</section>
 
 
 <!-- JANELA DO JOGO -->
@@ -55,22 +77,24 @@
            class="download"
            href="#"
            target="_blank">
-            ⬇️ DOWNLOAD
+            DOWNLOAD
         </a>
 
         <hr>
 
-        <h3>💬 Comentários</h3>
+        <h3>O download funciona?</h3>
 
-        <div id="comentarios"></div>
+        <div class="votosDownload">
+            <button class="voto funciona" onclick="votarDownload(true)">
+                Download funciona
+            </button>
 
-        <textarea id="novoComentario"
-                  placeholder="Escreva um comentário..."></textarea>
+            <button class="voto naoFunciona" onclick="votarDownload(false)">
+                Download não funciona
+            </button>
+        </div>
 
-        <button class="enviar"
-                onclick="adicionarComentario()">
-            Enviar comentário
-        </button>
+        <div id="resultadoVotos" class="resultadoVotos"></div>
 
     </div>
 
@@ -419,7 +443,7 @@ function abrirJogo(jogo) {
     document.getElementById("botaoDownload").href =
         jogo.download;
 
-    carregarComentarios();
+    carregarVotos();
 
     document.getElementById("janelaJogo")
         .classList.add("ativa");
@@ -437,68 +461,74 @@ function fecharJogo() {
 }
 
 
-/* =================================
-        COMENTÁRIOS
+/* ===/* =================================
+        VOTOS DO DOWNLOAD
 ================================= */
 
-function carregarComentarios() {
+function carregarVotos() {
+    if (!jogoAtual) return;
 
-    const area =
-        document.getElementById("comentarios");
+    const chave = "votos_" + jogoAtual.nome;
+    const votos = JSON.parse(localStorage.getItem(chave)) || {
+        funciona: 0,
+        naoFunciona: 0
+    };
 
-    area.innerHTML = "";
-
-    const chave =
-        "comentarios_" + jogoAtual.nome;
-
-    const comentarios =
-        JSON.parse(localStorage.getItem(chave)) || [];
-
-    comentarios.forEach(comentario => {
-
-        const div =
-            document.createElement("div");
-
-        div.className = "comentario";
-
-        div.innerText = comentario;
-
-        area.appendChild(div);
-
-    });
+    document.getElementById("resultadoVotos").innerText =
+        "Funciona: " + votos.funciona +
+        " | Não funciona: " + votos.naoFunciona;
 }
 
+function votarDownload(funciona) {
+    if (!jogoAtual) return;
 
-function adicionarComentario() {
+    const chave = "votos_" + jogoAtual.nome;
+    const votos = JSON.parse(localStorage.getItem(chave)) || {
+        funciona: 0,
+        naoFunciona: 0
+    };
 
-    const campo =
-        document.getElementById("novoComentario");
+    if (funciona) {
+        votos.funciona++;
+    } else {
+        votos.naoFunciona++;
+    }
 
-    const texto =
-        campo.value.trim();
-
-    if (!texto) return;
-
-    const chave =
-        "comentarios_" + jogoAtual.nome;
-
-    const comentarios =
-        JSON.parse(localStorage.getItem(chave)) || [];
-
-    comentarios.push(texto);
-
-    localStorage.setItem(
-        chave,
-        JSON.stringify(comentarios)
-    );
-
-    campo.value = "";
-
-    carregarComentarios();
+    localStorage.setItem(chave, JSON.stringify(votos));
+    carregarVotos();
 }
 
 
 /* =================================
+        MENU
+================================= */
+
+function abrirMenu() {
+    document.getElementById("menuLateral").classList.add("aberto");
+    document.getElementById("fundoMenu").classList.add("ativo");
+}
+
+function fecharMenu() {
+    document.getElementById("menuLateral").classList.remove("aberto");
+    document.getElementById("fundoMenu").classList.remove("ativo");
+}
+
+function mostrarEmuladores() {
+    fecharMenu();
+
+    document.getElementById("paginaJogos").style.display = "none";
+    document.getElementById("paginaEmuladores").classList.add("ativa");
+}
+
+function mostrarPaginaPrincipal() {
+    fecharMenu();
+
+    document.getElementById("paginaEmuladores").classList.remove("ativa");
+    document.getElementById("paginaJogos").style.display = "block";
+}
+
+
+==============================
         INICIAR
 ================================= */
 
