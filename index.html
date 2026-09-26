@@ -1,0 +1,510 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GameStation</title>
+    <link rel="stylesheet" href="gamestation.css">
+</head>
+
+<body>
+
+<header>
+    <h1>🎮 GameStation</h1>
+
+    <div class="pesquisa">
+        <input type="text" id="campoPesquisa"
+               placeholder="Pesquisar jogo..."
+               oninput="pesquisar()">
+    </div>
+</header>
+
+<nav class="consoles">
+    <button onclick="mostrarTodos()">TODOS</button>
+    <button onclick="mostrarJogos('PS1')">PS1</button>
+    <button onclick="mostrarJogos('PS2')">PS2</button>
+    <button onclick="mostrarJogos('SNES')">SNES</button>
+    <button onclick="mostrarJogos('GameCube')">GameCube</button>
+    <button onclick="mostrarJogos('Sega MD')">Sega MD</button>
+</nav>
+
+<main>
+
+    <div id="tituloConsole">Todos os jogos</div>
+
+    <section id="listaJogos" class="grid"></section>
+
+</main>
+
+
+<!-- JANELA DO JOGO -->
+<div id="janelaJogo" class="janela">
+
+    <div class="conteudoJanela">
+
+        <button class="fechar" onclick="fecharJogo()">✕</button>
+
+        <img id="imagemJogo" src="" alt="">
+
+        <h2 id="nomeJogo"></h2>
+
+        <p id="consoleJogo"></p>
+
+        <a id="botaoDownload"
+           class="download"
+           href="#"
+           target="_blank">
+            ⬇️ DOWNLOAD
+        </a>
+
+        <hr>
+
+        <h3>💬 Comentários</h3>
+
+        <div id="comentarios"></div>
+
+        <textarea id="novoComentario"
+                  placeholder="Escreva um comentário..."></textarea>
+
+        <button class="enviar"
+                onclick="adicionarComentario()">
+            Enviar comentário
+        </button>
+
+    </div>
+
+</div>
+
+
+<script>
+
+const jogos = [
+
+/* =========================
+        SNES
+========================= */
+
+{
+    nome: "Ultimate Mortal Kombat 3",
+    console: "SNES",
+    imagem: "MV5BMDU3NDI1OWItNjQ0Ny00ZDk0LWI5ODEtZDc3NDVlZmE4NTE3XkEyXkFqcGc@._V1_QL75_UX190_CR0,2,190,281_.jpg",
+    download: "UltimateMortalKombat3.zip"
+},
+
+{
+    nome: "Mega Man X3",
+    console: "SNES",
+    imagem: "images/megaman-x3.jpg",
+    download: "MegaManX3"
+},
+
+{
+    nome: "Chester Cheetah - Too Cool to Fool",
+    console: "SNES",
+    imagem: "images/chester-too-cool.jpg",
+    download: "ChesterCheetahToo-Cool.sfc"
+},
+
+{
+    nome: "Super Mario All-Stars + Super Mario World",
+    console: "SNES",
+    imagem: "images/mario-all-stars.jpg",
+    download: "Mario.sfc"
+},
+
+{
+    nome: "Donkey Kong Country",
+    console: "SNES",
+    imagem: "images/dkc1.jpg",
+    download: "DonkeyKongCountry.smc"
+},
+
+{
+    nome: "Killer Instinct",
+    console: "SNES",
+    imagem: "images/killer-instinct.jpg",
+    download: "KillerInstinctm.sfc"
+},
+
+{
+    nome: "Top Gear 2",
+    console: "SNES",
+    imagem: "images/top-gear-2.jpg",
+    download: "#"
+},
+
+{
+    nome: "Donkey Kong Country 2 - Diddy's Kong Quest",
+    console: "SNES",
+    imagem: "images/dkc2.jpg",
+    download: "#"
+},
+
+{
+    nome: "Super Bomberman",
+    console: "SNES",
+    imagem: "Bomberman1.jpg",
+    download: "SuperBomberman.sfc"
+},
+
+{
+    nome: "Super Bomberman 2",
+    console: "SNES",
+    imagem: "Bomberman2.jpg",
+    download: "SuperBomberman.sfc"
+},
+
+{
+    nome: "Donkey Kong Country 3 - Dixie Kong's Double Trouble",
+    console: "SNES",
+    imagem: "",
+    download: "DonkeyKongCountry3.smc"
+},
+
+{
+    nome: "Super Bomberman 3",
+    console: "SNES",
+    imagem: "Bomberman3.png",
+    download: "SuperBomberman3.sfc"
+},
+
+{
+    nome: "Super Bomberman 4",
+    console: "SNES",
+    imagem: "Bomberman4.jpg",
+    download: "SuperBomberman4.sfc"
+},
+
+{
+    nome: "Super Bomberman 5",
+    console: "SNES",
+    imagem: "Bomberman5.jpg",
+    download: "SuperBombermn5.sfc"
+},
+
+{
+    nome: "Castlevania - Dracula X",
+    console: "SNES",
+    imagem: "images/dracula-x.jpg",
+    download: "CastlevanuaDraculaX.sfc"
+},
+
+{
+    nome: "Chester Cheetah - Wild Wild Quest",
+    console: "SNES",
+    imagem: "images/chester-wild.jpg",
+    download: "ChesterCheetah.sfc"
+},
+
+
+/* =========================
+        SEGA MD
+========================= */
+
+{
+    nome: "Shadow in Sonic",
+    console: "Sega MD",
+    imagem: "images/shadow-sonic.jpg",
+    download: "#"
+},
+
+{
+    nome: "Shinobi III - Return of the Ninja Master",
+    console: "Sega MD",
+    imagem: "images/shinobi3.jpg",
+    download: "shinobi3.sfc"
+},
+
+
+/* =========================
+        PS2
+========================= */
+
+{
+    nome: "Tekken 6",
+    console: "PS2",
+    imagem: "images/tekken6.jpg",
+    download: "#"
+},
+
+{
+    nome: "Ben 10 - Protector of Earth",
+    console: "PS2",
+    imagem: "images/ben10.jpg",
+    download: "#"
+},
+
+{
+    nome: "The Con",
+    console: "PS2",
+    imagem: "images/the-con.jpg",
+    download: "#"
+},
+
+
+/* =========================
+        PS1
+========================= */
+
+{
+    nome: "Bloody Roar II",
+    console: "PS1",
+    imagem: "images/bloody-roar2.jpg",
+    download: "#"
+},
+
+{
+    nome: "Tekken 3",
+    console: "PS1",
+    imagem: "images/tekken3.jpg",
+    download: "#"
+},
+
+{
+    nome: "Mortal Kombat 4",
+    console: "PS1",
+    imagem: "images/mk4.jpg",
+    download: "#"
+},
+
+
+/* =========================
+        GAMECUBE
+========================= */
+
+{
+    nome: "Dragon Ball Z - Sagas",
+    console: "GameCube",
+    imagem: "images/dbz-sagas.jpg",
+    download: "#"
+},
+
+{
+    nome: "Resident Evil 4",
+    console: "GameCube",
+    imagem: "images/re4-gc.jpg",
+    download: "#"
+}
+
+];
+
+
+/* =================================
+        CONFIGURAÇÃO
+================================= */
+
+let consoleSelecionado = "TODOS";
+let jogoAtual = null;
+
+
+/* =================================
+        MOSTRAR JOGOS
+================================= */
+
+function mostrarJogos(consoleNome) {
+
+    consoleSelecionado = consoleNome;
+
+    document.getElementById("tituloConsole").innerText =
+        consoleNome;
+
+    pesquisar();
+}
+
+
+function mostrarTodos() {
+
+    consoleSelecionado = "TODOS";
+
+    document.getElementById("tituloConsole").innerText =
+        "Todos os jogos";
+
+    pesquisar();
+}
+
+
+/* =================================
+        PESQUISA
+================================= */
+
+function pesquisar() {
+
+    const texto =
+        document.getElementById("campoPesquisa")
+        .value
+        .toLowerCase();
+
+    let resultado = jogos.filter(jogo => {
+
+        const pertenceAoConsole =
+            consoleSelecionado === "TODOS" ||
+            jogo.console === consoleSelecionado;
+
+        const correspondePesquisa =
+            jogo.nome.toLowerCase().includes(texto);
+
+        return pertenceAoConsole && correspondePesquisa;
+
+    });
+
+    mostrarLista(resultado);
+}
+
+
+/* =================================
+        CRIAR CARDS
+================================= */
+
+function mostrarLista(lista) {
+
+    const area =
+        document.getElementById("listaJogos");
+
+    area.innerHTML = "";
+
+    if (lista.length === 0) {
+
+        area.innerHTML =
+            `<p class="nenhum">Nenhum jogo encontrado.</p>`;
+
+        return;
+    }
+
+    lista.forEach(jogo => {
+
+        const card = document.createElement("div");
+
+        card.className = "card";
+
+        card.innerHTML = `
+
+            <img src="${jogo.imagem}"
+                 alt="${jogo.nome}"
+                 onerror="this.src='images/sem-capa.jpg'">
+
+            <h3>${jogo.nome}</h3>
+
+            <span>${jogo.console}</span>
+
+            <button onclick='abrirJogo(${JSON.stringify(jogo)})'>
+                VER JOGO
+            </button>
+
+        `;
+
+        area.appendChild(card);
+
+    });
+}
+
+
+/* =================================
+        ABRIR JOGO
+================================= */
+
+function abrirJogo(jogo) {
+
+    jogoAtual = jogo;
+
+    document.getElementById("imagemJogo").src =
+        jogo.imagem;
+
+    document.getElementById("nomeJogo").innerText =
+        jogo.nome;
+
+    document.getElementById("consoleJogo").innerText =
+        "Console: " + jogo.console;
+
+    document.getElementById("botaoDownload").href =
+        jogo.download;
+
+    carregarComentarios();
+
+    document.getElementById("janelaJogo")
+        .classList.add("ativa");
+}
+
+
+/* =================================
+        FECHAR
+================================= */
+
+function fecharJogo() {
+
+    document.getElementById("janelaJogo")
+        .classList.remove("ativa");
+}
+
+
+/* =================================
+        COMENTÁRIOS
+================================= */
+
+function carregarComentarios() {
+
+    const area =
+        document.getElementById("comentarios");
+
+    area.innerHTML = "";
+
+    const chave =
+        "comentarios_" + jogoAtual.nome;
+
+    const comentarios =
+        JSON.parse(localStorage.getItem(chave)) || [];
+
+    comentarios.forEach(comentario => {
+
+        const div =
+            document.createElement("div");
+
+        div.className = "comentario";
+
+        div.innerText = comentario;
+
+        area.appendChild(div);
+
+    });
+}
+
+
+function adicionarComentario() {
+
+    const campo =
+        document.getElementById("novoComentario");
+
+    const texto =
+        campo.value.trim();
+
+    if (!texto) return;
+
+    const chave =
+        "comentarios_" + jogoAtual.nome;
+
+    const comentarios =
+        JSON.parse(localStorage.getItem(chave)) || [];
+
+    comentarios.push(texto);
+
+    localStorage.setItem(
+        chave,
+        JSON.stringify(comentarios)
+    );
+
+    campo.value = "";
+
+    carregarComentarios();
+}
+
+
+/* =================================
+        INICIAR
+================================= */
+
+mostrarTodos();
+
+</script>
+
+</body>
+</html>
